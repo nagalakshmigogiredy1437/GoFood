@@ -10,6 +10,7 @@ const path = require("path");
 const app = express();
 
 dotEnv.config();
+const PORT = process.env.PORT || 5000;
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -22,6 +23,10 @@ app.use("/firm", firmRouter);
 app.use("/product", productRouter);
 app.use("/uploads", express.static("uploads"));
 
-app.listen(5000, () => {
+app.listen(PORT, () => {
   console.log("server listening on port 5000");
+});
+
+app.use("/", (req, res) => {
+  res.send("<h1>welcom to GoFood</h1>");
 });
