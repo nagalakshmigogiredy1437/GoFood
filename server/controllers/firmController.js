@@ -22,7 +22,9 @@ const addFirm = async (req, res) => {
     if (!vendor) {
       return res.status(400).json({ message: "Vendor not found" });
     }
-
+    if (vendor.firm.length > 0) {
+      return res.status(400).json({ message: "Vendor can have only one firm" });
+    }
     const newFirm = new Firm({
       firmName,
       area,
@@ -34,10 +36,10 @@ const addFirm = async (req, res) => {
     });
 
     const savedFirm = await newFirm.save();
-
+    const formId = savedFirm._id;
     vendor.firm.push(savedFirm);
     await vendor.save();
-    return res.status(200).json({ message: "Firm added successfully" });
+    return res.status(200).json({ message: "Firm added successfully", formId });
   } catch (err) {
     console.error("Error in addFirm:", err);
     return res.status(400).json({ message: "Error adding firm", error: err });
@@ -56,4 +58,4 @@ const deleteFirmById = async (req, res) => {
   }
 };
 
-module.exports = { addFirm, upload, deleteFirmById };
+module.exports = { addFirm: [upload.single("image"), addFirm], deleteFirmById };

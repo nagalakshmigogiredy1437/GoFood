@@ -41,9 +41,9 @@ const vendorLogin = async (req, res) => {
       expiresIn: "1h",
     });
     console.log(venEmail, token);
-    res.status(200).json({ success: "Login successfully", token });
+    res.status(200).json({ success: "Login successfully", token, venEmail });
   } catch (err) {
-    return req.status(404).json({ message: "error in vendor login " });
+    return res.status(404).json({ message: "error in vendor login " });
   }
 };
 const getAllVendors = async (req, res) => {
@@ -58,10 +58,13 @@ const getAllVendors = async (req, res) => {
 const getVendorById = async (req, res) => {
   try {
     const vendorbyid = await vendor.findById(req.params.id).populate("firm");
+    console.log("vendorbyid", vendorbyid);
     if (!vendorbyid) {
       return res.status(400).json({ message: "vendor not found" });
     }
-    return res.json({ vendorbyid });
+    console.log("vendor id", vendorbyid.firm[0]._id);
+    let vendorFormId = vendorbyid.firm[0]._id;
+    return res.status(200).json({ vendorFormId, vendorbyid });
   } catch {
     return res.status(400).json({ message: "Internal server error" });
   }
